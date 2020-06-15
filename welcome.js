@@ -165,9 +165,12 @@ function card(pd) {
     `" aria-label="close"></button>
     </header>
     <section class="modal-card-body">
+    <div class="box">
       ` +
     pd.post +
     `
+    </div>
+    <div id="repliesText-`+pd.id+`"> </div>
     </section>
     <div class="level-left has-background-white">
          <a class="level-item reply-post" data-target="modal-` +
@@ -197,6 +200,7 @@ function card(pd) {
     `
          </a>
        </div>
+      
     <footer class="modal-card-foot">
     <figure class="image is-48x48"><img class="is-rounded" id="avatar" src="` +
     currentUser.photoURL +
@@ -262,23 +266,64 @@ function readPosts(pp) {
           likePost(id, currentUser);
         }
       });
-      $(".reply-post").click(function () {
-        var id = $(this).attr("id");
-        $("#modal-" + id).addClass("is-active");
-        $("#reply-button-" + id).click(function () {
-          replyToPost(id, currentUser, $("#text-reply-" + id).val());
-        });
-        $("#modal-close-" + id).click(function (event) {
-          $("#modal-" + id).removeClass("is-active");
-        });
+      $(".reply-post").click(function(){
+        repl($(this).attr("id"))
       });
     });
+}
+
+function repl(id){
+    getReplies(id, function () { 
+      $("#repliesText-"+id).html(repliesHtml())
+      $("#modal-" + id).addClass("is-active");
+      $("#reply-button-" + id).click(function () {
+        replyToPost(id, currentUser, $("#text-reply-" + id).val());
+      });
+      $("#modal-close-" + id).click(function (event) {
+        $("#modal-" + id).removeClass("is-active");
+      }); 
+     })
+}
+
+var repliesHtml = function(){
+  str = ""
+  name = ""
+  if(replies){
+    for(let i in replies){
+      if (replies[i].name){
+        name = replies[i].name
+      }else{
+        name = replies[i].email
+      }
+
+      str += `
+      <div class="box">
+        <article class="media">
+          <div class="media-left>
+            <figure class="image is-32x32">
+                <img class="is-rounded" src="`+replies[i].photoURL+`" alt="" width="32" height="32">
+            </figure>
+          </div>
+          <div class="media-content>
+            <div class="content">
+              <p>&nbsp;&nbsp;<strong>`+name+`</strong> <small>`+$.timeago(replies[i].timestamp)+`</small> </p>
+              <div>`+replies[i].reply+`</div>
+            </div>
+          </div>
+        </article>
+      </div>
+      `
+    }
+    
+  }
+  return str
 }
 
 function replyToPost(postId, user, reply) {
   var replyData = {
     userId: user.uid,
     email: user.email,
+    name: user.displayName,
     photoURL: user.photoURL,
     reply: reply,
     timestamp: new Date().getTime(),
@@ -289,9 +334,11 @@ function replyToPost(postId, user, reply) {
     .set(replyData, function (error) {
       if (error) {
       } else {
-        console.log("you replied to this post!");
+        repl(postId)
+        console.log("you replied to this dweet!");
       }
     });
+    
 }
 
 function unlikePost(postId, user) {
@@ -360,6 +407,15 @@ function retrievePost() {
       var data = childSnapshot.val();
       vv = data;
     });
+  });
+}
+
+
+var replies = null
+function getReplies(id, callback) {
+  firebase.database().ref("/forum/"+id+"/replies").once("value").then(function (snapshot) {
+      replies = snapshot.val()
+      callback()
   });
 }
 
