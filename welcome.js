@@ -115,6 +115,9 @@ $(document).ready(function () {
   });
   $("#delete-notification").click(function (event) {
     $(".notification").hide();
+    for (let i in tags){
+      $(".notification").removeClass(tags[i])
+    }
   });
 });
 
@@ -487,7 +490,9 @@ function writePost(user, pic = "") {
     postedby: user.displayName,
     postedon: -d.getTime(),
   };
-  if (post === "") {
+  var fd = new FormData();
+  var files = $("#file")[0].files[0];
+  if (post === "" && !files) {
     showNotif("cant kweet emptiness haha","is-warning");
     $("#btnPost").text(`Kweet`);
   } else {
@@ -511,12 +516,11 @@ function writePost(user, pic = "") {
 
 function showNotif(msg, label) {
   $(".notification-message").text(msg);
-  if (label == "is-success") $(".notification").removeClass("is-danger");
-  else $(".notification").removeClass("is-success");
   $(".notification").addClass(label);
   $(".notification").removeClass("invisible");
   $(".notification").slideDown();
 }
+
 
 function welcome(user) {
   $("#avatar").attr("src", user.photoURL);
