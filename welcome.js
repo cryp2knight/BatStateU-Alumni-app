@@ -4,6 +4,12 @@ var database = firebase.database();
 var enrolmentData = {};
 readPosts(postPagination);
 
+var escape = document.createElement('textarea');
+function escapeHTML(html) {
+    escape.textContent = html;
+    return escape.innerHTML;
+}
+
 function scrollFunction() {
   if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
     mybutton.style.display = "block";
@@ -59,8 +65,46 @@ $(document).ready(function () {
   $("#sign-out").click(function () {
     signOut();
   });
+  $(document).on('submit', '#uploadimage', function() {
+    // do your things
+    return false;
+   });
+  $("#file").on('change',function(){
+    var files = $('#file')[0].files[0];
+    if (files) {
+      $('.file-name').text(files.name)
+    }
+  })
   $("#btnPost").click(function () {
-    writePost(currentUser);
+    $("#btnPost").html(`<div class="loader"></div>&nbsp;&nbsp;Uploading...`)
+    var fd = new FormData();
+    var files = $('#file')[0].files[0];
+    fd.append('image', files);
+    if(files){
+      $.ajax({
+          url: 'https://api.imgbb.com/1/upload?key=440d86c8623ceb728e8f1661e58d6e0c',
+          type: 'POST',
+          data: fd,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+              if (response) {
+                picurl = response.data.medium.url
+                str = `<a href="`+picurl+`"><img src="`+picurl+`"></a>`
+                console.log(str)
+                writePost(currentUser,str);
+              } else {
+                  alert('file not uploaded');
+              }
+              fd.delete('image')
+              files = null
+              $('.file-name').text("No image")
+          },
+      });
+    }else{
+      writePost(currentUser);
+    }
+
   });
   // $("#get-enrolment-records").click(function() {
   //     getEnrolmentRecords(currentUser);
@@ -325,7 +369,7 @@ function replyToPost(postId, user, reply) {
     email: user.email,
     name: user.displayName,
     photoURL: user.photoURL,
-    reply: reply,
+    reply: escapeHTML(reply),
     timestamp: new Date().getTime(),
   };
   database
@@ -335,7 +379,7 @@ function replyToPost(postId, user, reply) {
       if (error) {
       } else {
         repl(postId)
-        console.log("you replied to this dweet!");
+        console.log("you replied to this kweet!");
       }
     });
     
@@ -419,14 +463,14 @@ function getReplies(id, callback) {
   });
 }
 
-function writePost(user) {
+function writePost(user, pic="") {
   var d = new Date();
   var post = $("#post").val();
   var data = {
     uid: user.uid,
     email: user.email,
     photo: user.photoURL,
-    post: post,
+    post: escapeHTML(post)+pic,
     dateposted: d,
     postedby: user.displayName,
     postedon: -d.getTime(),
@@ -437,11 +481,13 @@ function writePost(user) {
     .set(data, function (error) {
       if (error) {
         console.log(error);
-        showNotif(error, "is-danger");
+        showNotif("Your kweet is not kweeted! :p", "is-danger");
+        $("#btnPost").html(`Kweet`)
       } else {
         $("#post").val("");
-        showNotif("Your dweet is dwitted!", "is-success");
+        showNotif("Your kweet is kweeted!", "is-success");
         console.log("Post save!");
+        $("#btnPost").text(`Kweet`)
       }
     });
 }
@@ -462,11 +508,3 @@ function welcome(user) {
   readPosts(postPagination);
 }
 
-function prettyDate(date, startDate) {
-  var secs = Math.floor((date.getTime() - startDate.getTime()) / 1000);
-  if (secs < 60) return secs + " sec(s) ago";
-  if (secs < 3600) return Math.floor(secs / 60) + " min(s) ago";
-  if (secs < 86400) return Math.floor(secs / 3600) + " hour(s) ago";
-  if (secs < 604800) return Math.floor(secs / 86400) + " day(s) ago";
-  return date.toDateString();
-}
