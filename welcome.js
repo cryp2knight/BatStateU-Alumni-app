@@ -4,10 +4,10 @@ var database = firebase.database();
 var enrolmentData = {};
 readPosts(postPagination);
 
-var escape = document.createElement('textarea');
+var escape = document.createElement("textarea");
 function escapeHTML(html) {
-    escape.textContent = html;
-    return escape.innerHTML;
+  escape.textContent = html;
+  return escape.innerHTML;
 }
 
 function scrollFunction() {
@@ -65,46 +65,46 @@ $(document).ready(function () {
   $("#sign-out").click(function () {
     signOut();
   });
-  $(document).on('submit', '#uploadimage', function() {
+  $(document).on("submit", "#uploadimage", function () {
     // do your things
     return false;
-   });
-  $("#file").on('change',function(){
-    var files = $('#file')[0].files[0];
+  });
+  $("#file").on("change", function () {
+    var files = $("#file")[0].files[0];
     if (files) {
-      $('.file-name').text(files.name)
+      $(".file-name").text(files.name);
     }
-  })
+  });
   $("#btnPost").click(function () {
-    $("#btnPost").html(`<div class="loader"></div>&nbsp;&nbsp;Uploading...`)
+    $("#btnPost").html(`<div class="loader"></div>&nbsp;&nbsp;Uploading...`);
     var fd = new FormData();
-    var files = $('#file')[0].files[0];
-    fd.append('image', files);
-    if(files){
+    var files = $("#file")[0].files[0];
+    fd.append("image", files);
+    if (files) {
       $.ajax({
-          url: 'https://api.imgbb.com/1/upload?key=440d86c8623ceb728e8f1661e58d6e0c',
-          type: 'POST',
-          data: fd,
-          contentType: false,
-          processData: false,
-          success: function (response) {
-              if (response) {
-                picurl = response.data.medium.url
-                str = `<a href="`+picurl+`"><img src="`+picurl+`"></a>`
-                console.log(str)
-                writePost(currentUser,str);
-              } else {
-                  alert('file not uploaded');
-              }
-              fd.delete('image')
-              files = null
-              $('.file-name').text("No image")
-          },
+        url:
+          "https://api.imgbb.com/1/upload?key=440d86c8623ceb728e8f1661e58d6e0c",
+        type: "POST",
+        data: fd,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+          if (response) {
+            picurl = response.data.medium.url;
+            str = `<br><a href="` + picurl + `"><img src="` + picurl + `"></a>`;
+            writePost(currentUser, str);
+          } else {
+            alert("file not uploaded");
+          }
+          fd.delete("image");
+          files = null;
+          $(".file-name").text("No image");
+          document.getElementById("uploadimage").reset();
+        },
       });
-    }else{
+    } else {
       writePost(currentUser);
     }
-
   });
   // $("#get-enrolment-records").click(function() {
   //     getEnrolmentRecords(currentUser);
@@ -214,7 +214,9 @@ function card(pd) {
     pd.post +
     `
     </div>
-    <div id="repliesText-`+pd.id+`"> </div>
+    <div id="repliesText-` +
+    pd.id +
+    `"> </div>
     </section>
     <div class="level-left has-background-white">
          <a class="level-item reply-post" data-target="modal-` +
@@ -310,58 +312,66 @@ function readPosts(pp) {
           likePost(id, currentUser);
         }
       });
-      $(".reply-post").click(function(){
-        repl($(this).attr("id"))
+      $(".reply-post").click(function () {
+        repl($(this).attr("id"));
       });
     });
 }
 
-function repl(id){
-    getReplies(id, function () { 
-      $("#repliesText-"+id).html(repliesHtml())
-      $("#modal-" + id).addClass("is-active");
-      $("#reply-button-" + id).click(function () {
-        replyToPost(id, currentUser, $("#text-reply-" + id).val());
-      });
-      $("#modal-close-" + id).click(function (event) {
-        $("#modal-" + id).removeClass("is-active");
-      }); 
-     })
+function repl(id) {
+  getReplies(id, function () {
+    $("#repliesText-" + id).html(repliesHtml());
+    $("#modal-" + id).addClass("is-active");
+    $("#reply-button-" + id).click(function () {
+      replyToPost(id, currentUser, $("#text-reply-" + id).val());
+    });
+    $("#modal-close-" + id).click(function (event) {
+      $("#modal-" + id).removeClass("is-active");
+    });
+  });
 }
 
-var repliesHtml = function(){
-  str = ""
-  name = ""
-  if(replies){
-    for(let i in replies){
-      if (replies[i].name){
-        name = replies[i].name
-      }else{
-        name = replies[i].email
+var repliesHtml = function () {
+  str = "";
+  name = "";
+  if (replies) {
+    for (let i in replies) {
+      if (replies[i].name) {
+        name = replies[i].name;
+      } else {
+        name = replies[i].email;
       }
 
-      str += `
+      str +=
+        `
       <div class="box">
         <article class="media">
           <div class="media-left>
             <figure class="image is-32x32">
-                <img class="is-rounded" src="`+replies[i].photoURL+`" alt="" width="32" height="32">
+                <img class="is-rounded" src="` +
+        replies[i].photoURL +
+        `" alt="" width="32" height="32">
             </figure>
           </div>
           <div class="media-content>
             <div class="content">
-              <p>&nbsp;&nbsp;<strong>`+name+`</strong> <small>`+$.timeago(replies[i].timestamp)+`</small> </p>
-              <div>`+replies[i].reply+`</div>
+              <p>&nbsp;&nbsp;<strong>` +
+        name +
+        `</strong> <small>` +
+        $.timeago(replies[i].timestamp) +
+        `</small> </p>
+              <div>` +
+        replies[i].reply +
+        `</div>
             </div>
           </div>
         </article>
       </div>
-      `
+      `;
     }
-    
   }
-  return str
-}
+  return str;
+};
 
 function replyToPost(postId, user, reply) {
   var replyData = {
@@ -378,11 +388,10 @@ function replyToPost(postId, user, reply) {
     .set(replyData, function (error) {
       if (error) {
       } else {
-        repl(postId)
+        repl(postId);
         console.log("you replied to this kweet!");
       }
     });
-    
 }
 
 function unlikePost(postId, user) {
@@ -454,42 +463,50 @@ function retrievePost() {
   });
 }
 
-
-var replies = null
+var replies = null;
 function getReplies(id, callback) {
-  firebase.database().ref("/forum/"+id+"/replies").once("value").then(function (snapshot) {
-      replies = snapshot.val()
-      callback()
-  });
+  firebase
+    .database()
+    .ref("/forum/" + id + "/replies")
+    .once("value")
+    .then(function (snapshot) {
+      replies = snapshot.val();
+      callback();
+    });
 }
 
-function writePost(user, pic="") {
+function writePost(user, pic = "") {
   var d = new Date();
   var post = $("#post").val();
   var data = {
     uid: user.uid,
     email: user.email,
     photo: user.photoURL,
-    post: escapeHTML(post)+pic,
+    post: escapeHTML(post) + pic,
     dateposted: d,
     postedby: user.displayName,
     postedon: -d.getTime(),
   };
-  database
-    .ref("forum")
-    .push()
-    .set(data, function (error) {
-      if (error) {
-        console.log(error);
-        showNotif("Your kweet is not kweeted! :p", "is-danger");
-        $("#btnPost").html(`Kweet`)
-      } else {
-        $("#post").val("");
-        showNotif("Your kweet is kweeted!", "is-success");
-        console.log("Post save!");
-        $("#btnPost").text(`Kweet`)
-      }
-    });
+  if (post === "") {
+    showNotif("cant kweet emptiness haha","is-warning");
+    $("#btnPost").text(`Kweet`);
+  } else {
+    database
+      .ref("forum")
+      .push()
+      .set(data, function (error) {
+        if (error) {
+          console.log(error);
+          showNotif("Your kweet is not kweeted! :p", "is-danger");
+          
+        } else {
+          $("#post").val("");
+          showNotif("Your kweet is kweeted!", "is-success");
+          console.log("Post save!");
+        }
+        $("#btnPost").text(`Kweet`);
+      });
+  }
 }
 
 function showNotif(msg, label) {
@@ -507,4 +524,3 @@ function welcome(user) {
   $("#name").text(user.email);
   readPosts(postPagination);
 }
-
