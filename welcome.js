@@ -349,20 +349,17 @@ var repliesHtml = function () {
         `
       <div class="box">
         <article class="media">
-          <div class="media-left>
-            <figure class="image is-32x32">
-                <img class="is-rounded" src="` +
-        replies[i].photoURL +
-        `" alt="" width="32" height="32">
-            </figure>
-          </div>
           <div class="media-content>
             <div class="content">
-              <p>&nbsp;&nbsp;<strong>` +
+              <table><tr><td><figure class="image is-32x32">
+              <img class="is-rounded" src="` +
+      replies[i].photoURL +
+      `" alt="">
+          </figure></td><td>&nbsp;&nbsp;<strong>` +
         name +
-        `</strong> <small>` +
+        `</strong></td><td align=right>&nbsp;&nbsp;<small>` +
         $.timeago(replies[i].timestamp) +
-        `</small> </p>
+        `</small></td></tr></table>
               <div>` +
         replies[i].reply +
         `</div>
