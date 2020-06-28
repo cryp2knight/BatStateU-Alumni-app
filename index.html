@@ -51,7 +51,7 @@
             /* Fixed/sticky position */
             bottom: 20px;
             /* Place the button at the bottom of the page */
-            right: 30px;
+            left: 30px;
             /* Place the button 30px from the right */
             z-index: 99;
             /* Make sure it does not overlap */
@@ -77,13 +77,36 @@
             background-color: #555;
             /* Add a dark-grey background on hover */
         }
+
+        #btnKweet {
+            position: fixed;
+            /* Fixed/sticky position */
+            bottom: 20px;
+            /* Place the button at the bottom of the page */
+            right: 30px;
+            /* Place the button 30px from the right */
+            z-index: 99;
+            /* Make sure it does not overlap */
+            /* Set a background color */
+            color: white;
+            /* Text color */
+            cursor: pointer;
+            /* Add a mouse pointer on hover */
+            padding: 10px;
+            /* Some padding */
+            border-radius: 30px;
+            /* Rounded corners */
+            font-size: 18px;
+            /* Increase font size */
+        }
     </style>
     </link>
     </meta>
 </head>
 
 <body>
-    <button onclick="topFunction()" id="btnTop" title="Go to top">Top</button>
+    <!-- <button onclick="topFunction()" id="btnTop" title="Go to top">Top</button> -->
+
     <div class="pageloader">
     </div>
     <div id="sign-in" style="display: none">
@@ -106,13 +129,13 @@
             <div class="box">
                 <h1 class="title">Hi! Welcome to Kwitter</h1>
                 <p class="subtitle">Not Twitter. Not better. lol</p>
-                
-                    <button class="button is-fullwidth" id="google-auth">
-                        <span class="icon is-medium">
-                            <i class="fa fa-envelope" aria-hidden="true"></i>
-                        </span>&nbsp;&nbsp;&nbsp;Sign in with Google
-                    </button>
-                
+
+                <button class="button is-fullwidth" id="google-auth">
+                    <span class="icon is-medium">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                    </span>&nbsp;&nbsp;&nbsp;Sign in with Google
+                </button>
+
             </div>
         </div>
         </hr>
@@ -137,14 +160,11 @@
             <div class="navbar-menu mx-3">
                 <div class="navbar-end">
                     <div class="navbar-item">
-
-
                     </div>
                     <div class="navbar-item">
                         <div id="name">
                         </div>
                     </div>
-
                     <div class="navbar-item">
                         <div class="buttons">
                             <a class="button is-primary" id="sign-out">
@@ -154,7 +174,6 @@
                             </a>
                         </div>
                     </div>
-
                 </div>
             </div>
         </nav>
@@ -165,48 +184,65 @@
             <div class="notification-message">
             </div>
         </div>
-        <br>
+
         <div class="invisible" id="forum">
-           
-            <div class="container is-fluid">
-                <textarea class="textarea is-primary" id="post" placeholder="kweet something"></textarea>
-                <form method="post" action="" enctype="multipart/form-data" id="uploadimage">
-                    <div class="file has-name is-fullwidth">
-                        <label class="file-label">
-                          <input class="file-input" type="file" name="file" id="file">
-                          <span class="file-cta">
-                            <span class="file-icon">
-                              <i class="fas fa-upload"></i>
-                            </span>
-                            <span class="file-label">
-                              Upload image
-                            </span>
-                          </span>
-                          <span class="file-name">
-                           No image
-                          </span>
-                        </label>
-                      </div>
-                    <div>
-                        <button class="button is-primary is-fullwidth" id="btnPost">
-                            Kweet
+            <div class="columns">
+                <div class="column"></div>
+                <div class="column is-two-thirds">
+                    <div class="container is-fluid invisible" id="kweetIt">
+                        <button class="delete" id="btnHide">
                         </button>
-                        <!-- <input type="button" class="button" value="Upload" id="but_upload"> -->
+                        <textarea class="textarea is-primary" id="post" placeholder="kweet something"></textarea>
+                        <form method="post" action="" enctype="multipart/form-data" id="uploadimage">
+                            <div class="file has-name is-fullwidth">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="file" id="file">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i class="fas fa-upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Upload image
+                                        </span>
+                                    </span>
+                                    <span class="file-name">
+                                        No image
+                                    </span>
+                                </label>
+                            </div>
+                            <div>
+                                <button class="button is-primary is-fullwidth" id="btnPost">
+                                    Kweet
+                                </button>
+                                <!-- <input type="button" class="button" value="Upload" id="but_upload"> -->
+                            </div>
+                        </form>
+                        <hr>
                     </div>
-                </form>
+                    
+                    <div class="is-clipped" id="posts">
+                    </div>
+
+                    <center>
+                        <div class="loader"></div>
+                    </center>
+
+                    <button class="button is-fullwidth" id="paginatePost">
+                        Load more
+                    </button>
+                </div>
+
+                <div class="column"></div>
             </div>
-            <hr>
-            
-            <div class="is-clipped" id="posts">
-            </div>
-            <button class="button is-fullwidth" id="paginatePost">
-                Load more
-            </button>
-            <br><br>
         </div>
-        <div class="invisible" id="readPost">
-        </div>
+        <button id="btnKweet" class="button is-primary is-large" onclick="topFunction()">
+            <span class="icon is-large">
+                <i class="fa fa-feather" aria-hidden="true"></i>
+            </span>&nbsp;&nbsp;&nbsp;Kweet
+        </button>
     </div>
+    <br>
+    <br>
     <script src="script.js" type="text/javascript">
     </script>
 </body>

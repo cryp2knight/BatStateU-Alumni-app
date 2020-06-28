@@ -2,6 +2,7 @@ var postPagination = 5;
 var currentUser = null;
 var database = firebase.database();
 var enrolmentData = {};
+var verified = null;
 readPosts(postPagination);
 
 var escape = document.createElement("textarea");
@@ -10,21 +11,21 @@ function escapeHTML(html) {
   return escape.innerHTML;
 }
 
-function scrollFunction() {
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    mybutton.style.display = "block";
-  } else {
-    mybutton.style.display = "none";
-  }
-}
 
 // When the user clicks on the button, scroll to the top of the document
 function topFunction() {
+  $("#kweetIt").removeClass("invisible");
+  $("#kweetIt").slideDown();
   document.body.scrollTop = 0; // For Safari
   document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
 
 $(document).ready(function () {
+  getVerified(data =>{
+    verified = data
+    console.log(verified)
+  })
+
   $(".navbar-burger").click(function (e) {
     $(".navbar-menu").toggleClass("is-active");
     $(".navbar-burger").toggleClass("is-active");
@@ -42,11 +43,6 @@ $(document).ready(function () {
   ];
 
   mybutton = document.getElementById("btnTop");
-
-  // When the user scrolls down 20px from the top of the document, show the button
-  window.onscroll = function () {
-    scrollFunction();
-  };
 
   firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
@@ -119,6 +115,13 @@ $(document).ready(function () {
       $(".notification").removeClass(tags[i])
     }
   });
+
+  $("#btnHide").click(function (event) {
+    $("#kweetIt").hide();
+  });
+
+
+
 });
 
 function card(pd) {
@@ -265,6 +268,8 @@ function card(pd) {
 </div>`
   );
 }
+
+
 
 function readPosts(pp) {
   database
@@ -472,6 +477,17 @@ function getReplies(id, callback) {
     .then(function (snapshot) {
       replies = snapshot.val();
       callback();
+    });
+}
+
+function getVerified(callback) {
+  firebase
+    .database()
+    .ref("/verified")
+    .once("value")
+    .then(function (snapshot) {
+      console.log(snapshot.val())
+      callback(snapshot.val());
     });
 }
 
